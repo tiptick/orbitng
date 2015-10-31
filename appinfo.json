@@ -1,0 +1,23 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "JB Apps",
+    "longName": "Orbit NextGen",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "Orbit NG",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "0f5d23f0-e044-41b7-a975-ece6acbcf990",
+    "versionLabel": "0.8",
+    "watchapp": {
+        "watchface": true
+    }
+}
