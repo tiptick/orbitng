@@ -7,7 +7,13 @@
     "longName": "Orbit NextGen",
     "projectType": "native",
     "resources": {
-        "media": []
+        "media": [
+            {
+                "file": "images/OrbitNG_28.png",
+                "name": "ORBITNG_28",
+                "type": "png"
+            }
+        ]
     },
     "sdkVersion": "3",
     "shortName": "Orbit NG",
@@ -16,7 +22,7 @@
         "basalt"
     ],
     "uuid": "0f5d23f0-e044-41b7-a975-ece6acbcf990",
-    "versionLabel": "0.8",
+    "versionLabel": "0.9",
     "watchapp": {
         "watchface": true
     }
