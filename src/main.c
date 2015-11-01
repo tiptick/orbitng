@@ -17,25 +17,28 @@ static Time s_last_time;
 struct tm *s_tick_time;
 static bool isbtoff = false;
 static bool isbattlow = false;
+static TextLayer *s_time_layer;
+static Window *s_main_window;
 
 static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(this_layer);
-
-  // Get the center of the screen (non full-screen)
   GPoint center = GPoint(bounds.size.w / 2, (bounds.size.h / 2));
 
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, bounds.size.h), 0, GCornerNone);
 
-  // Draw the 'loop' of the 'P'
   graphics_context_set_fill_color(ctx, GColorBlack);
-//  graphics_fill_circle(ctx, center, 40);
-//  graphics_context_set_fill_color(ctx, GColorWhite);
+#ifdef PBL_SDK_3
   graphics_context_set_stroke_color(ctx, GColorWhite);
- // graphics_context_set_stroke_width(ctx, 5);
-//  graphics_context_set_stroke_width(ctx, 4);
+  graphics_context_set_stroke_width(ctx, 2);
   graphics_draw_circle(ctx, center, s_radius);
-  
+#elif PBL_SDK_2
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_draw_circle(ctx, center, s_radius);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_draw_circle(ctx, center, s_radius-2);
+#endif
+ 
   float minute_angle = TRIG_MAX_ANGLE * s_last_time.minutes / 60;
   GPoint minute_hand = (GPoint) {
     .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * s_last_time.minutes / 60) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.x,
@@ -81,21 +84,16 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   if (isbtoff) {
       GPoint bt_point = (GPoint){ .x=0,.y=0};
       graphics_context_set_fill_color(ctx, GColorBlue);
-      graphics_fill_circle(ctx,bt_point, 17);
-   
+      graphics_fill_circle(ctx,bt_point, 20);
   }
   #endif
  #ifdef PBL_SDK_3 
   if (isbattlow) {
       GPoint batt_point = (GPoint){ .x=bounds.size.w,.y=0};
       graphics_context_set_fill_color(ctx, GColorRed);
-      graphics_fill_circle(ctx,batt_point, 17);
-   
+      graphics_fill_circle(ctx,batt_point, 20);
   }
   #endif
-  
-  
-  
 }
 
 void bt_handler(bool connected) {
@@ -111,24 +109,15 @@ void bt_handler(bool connected) {
 }
 
 static void battery_handler(BatteryChargeState new_state) {
-  // Write to buffer and display
-  //static char s_battery_buffer[32];
-  //snprintf(s_battery_buffer, sizeof(s_battery_buffer), "Current battery level: %d/100", new_state.charge_percent);
-  //text_layer_set_text(s_output_layer, s_battery_buffer);
-  
   if (new_state.charge_percent < 10){
     isbattlow = true;
    }
   else  {
     isbattlow = false;   
   }
-  
-  
 }
 
 
-static TextLayer *s_time_layer;
-static Window *s_main_window;
 
 static void update_time() {
   // Get a tm structure
@@ -169,8 +158,6 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT));
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
-  
-
   // Add it as a child layer to the Window's root layer
     GRect window_bounds = layer_get_bounds(window_layer);
     s_canvas_layer = layer_create(GRect(0, 0, window_bounds.size.w, window_bounds.size.h));
@@ -193,9 +180,8 @@ static void main_window_unload(Window *window) {
 
 
 static void init(){
-  
   // Register with TickTimerService
-tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+  tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
 
   // Create main Window element and assign to pointer
   s_main_window = window_create();
@@ -223,7 +209,6 @@ tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
 static void deinit(){
     // Destroy Window
   window_destroy(s_main_window);
-  
 }
 
 
