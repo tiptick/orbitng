@@ -45,7 +45,11 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
     .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * s_last_time.minutes / 60) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.y,
   };
  //graphics_draw_line(ctx, center, minute_hand);
+#ifdef PBL_SDK_3
   graphics_context_set_fill_color(ctx, GColorWhite);
+#elif PBL_SDK_2  
+  graphics_context_set_fill_color(ctx, GColorWhite);
+#endif
   graphics_fill_circle(ctx,minute_hand, 17);
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_circle(ctx,minute_hand, 15);
@@ -139,7 +143,7 @@ static void update_time() {
 }
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
  update_time();
-layer_mark_dirty(s_canvas_layer);
+ layer_mark_dirty(s_canvas_layer);
 }
 
 static void main_window_load(Window *window) {
@@ -165,7 +169,19 @@ static void main_window_load(Window *window) {
     layer_add_child(window_layer, s_canvas_layer);
     layer_set_update_proc(s_canvas_layer, canvas_update_proc);
    // layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
-  battery_handler(battery_state_service_peek());
+    battery_handler(battery_state_service_peek());
+
+//BT  
+  #ifdef PBL_SDK_2
+  if (bluetooth_connection_service_peek()) {
+  #elif PBL_SDK_3
+  if (connection_service_peek_pebble_app_connection()) {
+  #endif
+     isbtoff = false;
+  } else {
+     isbtoff = true;
+  }
+//-BT  
 }
 
 static void main_window_unload(Window *window) {
