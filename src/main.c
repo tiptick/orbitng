@@ -75,7 +75,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   graphics_fill_circle(ctx,second_hand, 3);
 
   strftime(s_buffer, sizeof(s_buffer), "%H" , tick_time);
-  GRect sgr2 = GRect(center.x - 28, PBL_IF_ROUND_ELSE(60, 54), 60, 60);
+  GRect sgr2 = GRect(center.x - 30, PBL_IF_ROUND_ELSE(60, 54), 60, 60);
   graphics_draw_text(ctx, 
                      s_buffer,  
                      fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT), 
@@ -84,6 +84,25 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
                     GTextAlignmentCenter,
                    NULL
                     );
+  
+  //......month
+    strftime(s_buffer, sizeof(s_buffer),clock_is_24h_style() ?
+                                           "%d %m" : "%m %d" , tick_time);
+  GRect sgr3 =  GRect(center.x-28, 93,55,15);
+  graphics_draw_text(ctx, 
+                     s_buffer,  
+                     fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+                     sgr3,
+                     GTextOverflowModeWordWrap,
+                    GTextAlignmentCenter,
+                   NULL
+                    );
+  //---Month
+  
+  
+  
+  
+  
  #ifdef PBL_SDK_3 
   if (isbtoff) {
       GPoint bt_point = (GPoint){ .x=0,.y=0};
@@ -113,7 +132,7 @@ void bt_handler(bool connected) {
 }
 
 static void battery_handler(BatteryChargeState new_state) {
-  if (new_state.charge_percent < 10){
+  if (new_state.charge_percent <= 10){
     isbattlow = true;
    }
   else  {
