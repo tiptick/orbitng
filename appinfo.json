@@ -19,10 +19,11 @@
     "shortName": "Orbit NG",
     "targetPlatforms": [
         "aplite",
-        "basalt"
+        "basalt",
+        "chalk"
     ],
     "uuid": "0f5d23f0-e044-41b7-a975-ece6acbcf990",
-    "versionLabel": "0.9",
+    "versionLabel": "0.92",
     "watchapp": {
         "watchface": true
     }

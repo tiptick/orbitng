@@ -33,13 +33,14 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   graphics_context_set_stroke_width(ctx, 2);
   graphics_draw_circle(ctx, center, s_radius);
 #elif PBL_SDK_2
-  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+//graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_draw_circle(ctx, center, s_radius);
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_draw_circle(ctx, center, s_radius-2);
+ // graphics_context_set_fill_color(ctx, GColorBlack);
+ // graphics_draw_circle(ctx, center, s_radius-2);
 #endif
  
-  float minute_angle = TRIG_MAX_ANGLE * s_last_time.minutes / 60;
+  //float minute_angle = TRIG_MAX_ANGLE * s_last_time.minutes / 60;
   GPoint minute_hand = (GPoint) {
     .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * s_last_time.minutes / 60) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.x,
     .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * s_last_time.minutes / 60) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.y,
@@ -85,10 +86,10 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
                    NULL
                     );
   
-  //......month
+  //......Date
     strftime(s_buffer, sizeof(s_buffer),clock_is_24h_style() ?
                                            "%d %m" : "%m %d" , tick_time);
-  GRect sgr3 =  GRect(center.x-28, 93,55,15);
+  GRect sgr3 =  GRect(center.x-28, PBL_IF_ROUND_ELSE(98,93),55,15);
   graphics_draw_text(ctx, 
                      s_buffer,  
                      fonts_get_system_font(FONT_KEY_GOTHIC_14), 
@@ -97,7 +98,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
                     GTextAlignmentCenter,
                    NULL
                     );
-  //---Month
+  //---DATE
   
   
   
