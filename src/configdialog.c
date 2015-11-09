@@ -7,10 +7,11 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
    
    if (date_t && date_t->value->int32 > 0){
       persist_write_bool(PERS_DATE,true);
-    
+      pers.date = true;
    }
    else{
       persist_write_bool(PERS_DATE,false);
+      pers.date = false;
      //APP_LOG(APP_LOG_LEVEL_ERROR, "Could not parse config form phone");
    }
     

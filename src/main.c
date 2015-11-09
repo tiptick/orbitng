@@ -5,19 +5,7 @@
 
 
 
-typedef struct {
-  int hours;
-  int minutes;
-  int second;
-} Time;
 
-typedef struct{
-  bool date ;
-  
-  
-} Pers;
-
-static Pers pers;
 static Layer *s_canvas_layer;
 static int s_radius = 52;
 #define HAND_MARGIN  0
