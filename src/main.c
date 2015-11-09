@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "main.h"
-#include <bt.h>
+
+#include <configdialog.h>
 
 
 
@@ -10,6 +11,13 @@ typedef struct {
   int second;
 } Time;
 
+typedef struct{
+  bool date ;
+  
+  
+} Pers;
+
+static Pers pers;
 static Layer *s_canvas_layer;
 static int s_radius = 52;
 #define HAND_MARGIN  0
@@ -19,6 +27,7 @@ static bool isbtoff = false;
 static bool isbattlow = false;
 static TextLayer *s_time_layer;
 static Window *s_main_window;
+
 
 static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(this_layer);
@@ -85,8 +94,8 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
                     GTextAlignmentCenter,
                    NULL
                     );
-  
-  //......Date
+ //+++DATE 
+if(pers.date == true){
     strftime(s_buffer, sizeof(s_buffer),clock_is_24h_style() ?
                                            "%d %m" : "%m %d" , tick_time);
   GRect sgr3 =  GRect(center.x-28, PBL_IF_ROUND_ELSE(98,93),55,15);
@@ -99,7 +108,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
                    NULL
                     );
   //---DATE
-  
+}
   
   
   
@@ -239,6 +248,38 @@ static void init(){
 #endif
    
     battery_state_service_subscribe(battery_handler);
+  
+  
+//config handling
+  
+  app_message_register_inbox_received(inbox_received_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+   
+//persistency handling
+  
+  if ( persist_exists(PERS_VERSION) == false ){
+    //no data stored so fallback to coded defaults
+    persist_write_int(PERS_VERSION,1); //we are version 1
+    persist_write_bool(PERS_DATE,true);
+    
+    pers.date = persist_read_bool(PERS_DATE);   
+    
+  }
+  else{
+   // data exists 
+   // check if we have the correct version
+   if (persist_read_int(PERS_VERSION)==1){
+     pers.date = persist_read_bool(PERS_DATE);
+      
+   }
+   else{
+     //wrong version
+     ;
+   }   
+    
+  }  
+  
+  
   
 }
 
