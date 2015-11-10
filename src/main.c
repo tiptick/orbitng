@@ -117,11 +117,15 @@ if(pers.date == true){
 void bt_handler(bool connected) {
   if (connected) {
     APP_LOG(APP_LOG_LEVEL_INFO, "Phone is connected!");
+   if (pers.bt_vib){
     vibes_short_pulse();
+   }
     isbtoff = false;
   } else {
     APP_LOG(APP_LOG_LEVEL_INFO, "Phone is not connected!");
-    vibes_short_pulse();
+    if (pers.bt_vib){
+      vibes_short_pulse();
+    }
     isbtoff = true;
   }
 }
