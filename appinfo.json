@@ -1,5 +1,6 @@
 {
     "appKeys": {
+        "PERS_BT_VIB": 3,
         "PERS_DATE": 2,
         "PERS_VERSION": 1
     },

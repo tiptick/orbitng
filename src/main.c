@@ -3,9 +3,6 @@
 
 #include <configdialog.h>
 
-
-
-
 static Layer *s_canvas_layer;
 static int s_radius = 52;
 #define HAND_MARGIN  0
@@ -247,10 +244,12 @@ static void init(){
   
   if ( persist_exists(PERS_VERSION) == false ){
     //no data stored so fallback to coded defaults
-    persist_write_int(PERS_VERSION,1); //we are version 1
+    persist_write_int(PERS_VERSION,2); //we are version 2
     persist_write_bool(PERS_DATE,true);
+    persist_write_bool(PERS_BT_VIB,true);
     
-    pers.date = persist_read_bool(PERS_DATE);   
+    pers.date   = persist_read_bool(PERS_DATE);   
+    pers.bt_vib = persist_read_bool(PERS_BT_VIB); 
     
   }
   else{
@@ -258,8 +257,14 @@ static void init(){
    // check if we have the correct version
    if (persist_read_int(PERS_VERSION)==1){
      pers.date = persist_read_bool(PERS_DATE);
-      
+     persist_write_bool(PERS_BT_VIB,false);    //false is default
+     pers.bt_vib = persist_read_bool(PERS_BT_VIB);  
+     persist_write_int(PERS_VERSION,2);
    }
+   if (persist_read_int(PERS_VERSION)==2){
+     pers.date = persist_read_bool(PERS_DATE);
+     pers.bt_vib = persist_read_bool(PERS_BT_VIB);  
+   }   
    else{
      //wrong version
      ;

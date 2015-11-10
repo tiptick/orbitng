@@ -3,7 +3,7 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
-  var url = 'https://rawgit.com/tiptick/slate-config-example/master/config/index.html';
+  var url = 'https://rawgit.com/tiptick/slate-config-example/dev/config/index.html';
   console.log('Showing configuration page: ' + url);
 
   Pebble.openURL(url);
@@ -23,7 +23,12 @@ Pebble.addEventListener('webviewclosed', function(e) {
  //   dict['KEY_COLOR_GREEN'] = parseInt(backgroundColor.substring(4, 6), 16);
  //   dict['KEY_COLOR_BLUE'] = parseInt(backgroundColor.substring(6), 16);
   }
-
+if (configData['btvib'] === true){
+  dict['PERS_BT_VIB'] = configData['btvib'];
+  
+}
+  
+  
   // Send to watchapp
   Pebble.sendAppMessage(dict, function() {
     console.log('Send successful: ' + JSON.stringify(dict));
