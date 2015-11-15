@@ -17,8 +17,11 @@ static Window *s_main_window;
 static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(this_layer);
   GPoint center = GPoint(bounds.size.w / 2, (bounds.size.h / 2));
-
+#ifdef PBL_SDK_2
   graphics_context_set_fill_color(ctx, GColorBlack);
+#elif PBL_SDK_3
+  graphics_context_set_fill_color(ctx, GColorFromHEX(pers.backColor));
+#endif
   graphics_fill_rect(ctx, GRect(0, 0, bounds.size.w, bounds.size.h), 0, GCornerNone);
 
   graphics_context_set_fill_color(ctx, GColorBlack);

@@ -25,9 +25,9 @@ Pebble.addEventListener('webviewclosed', function(e) {
  //   dict['KEY_COLOR_BLUE'] = parseInt(backgroundColor.substring(6), 16);
   }
   
-//if (configData['btvib'] === true){
+if (configData['btvib'] === true){
   dict['PERS_BT_VIB'] = configData['btvib'];
-//}
+}
   
 //if (configData['backgroundColor'] === true){
   
@@ -41,15 +41,15 @@ Pebble.addEventListener('webviewclosed', function(e) {
 //if (configData['moonColor'] === true){
   dict['PERS_MOON_COLOR'] = parseInt(configData['moonColor']);
 //}
-//if (configData['earthFontBold'] === true){
+if (configData['earthFontBold'] === true){
   dict['PERS_EARTH_FONT_BOLD'] = configData['earthFontBold'];
-//}
-//if (configData['earthFontInvert'] === true){
+}
+if (configData['earthFontInvert'] === true){
   dict['PERS_EARTH_FONT_INVERT'] = configData['earthFontInvert'];
-//}
-//if (configData['moonFontInvert'] === true){
+}
+if (configData['moonFontInvert'] === true){
   dict['PERS_MOON_FONT_INVERT'] = configData['moonFontInvert'];
-//} 
+} 
     
   
 

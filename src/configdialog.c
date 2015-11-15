@@ -31,15 +31,6 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
    }
    else{
      APP_LOG(APP_LOG_LEVEL_ERROR, "Could not parse config form phone: BACK_COLOR");
-     dict_read_first(iter);
-     for (int i=0; i<8;i++){
-       Tuple *t = dict_read_next(iter);
-       APP_LOG(APP_LOG_LEVEL_ERROR,"%d %d : ", (int)t->value->int32,(int)t->key);
-       
-       
-     }
-     
-     
      
    }
   
