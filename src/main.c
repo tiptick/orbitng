@@ -25,7 +25,10 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 #ifdef PBL_SDK_3
   graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_stroke_width(ctx, 2);
+  graphics_context_set_fill_color(ctx,GColorFromHEX(pers.earthColor));
   graphics_draw_circle(ctx, center, s_radius);
+  graphics_fill_circle(ctx, center, s_radius-1);
+
 #elif PBL_SDK_2
   graphics_context_set_stroke_color(ctx, GColorWhite);
 //graphics_context_set_fill_color(ctx, GColorWhite);
@@ -42,15 +45,26 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
  //graphics_draw_line(ctx, center, minute_hand);
 #ifdef PBL_SDK_3
   graphics_context_set_fill_color(ctx, GColorWhite);
-#elif PBL_SDK_2  
-  graphics_context_set_fill_color(ctx, GColorWhite);
-#endif
-  graphics_fill_circle(ctx,minute_hand, 17);
-  graphics_context_set_fill_color(ctx, GColorBlack);
+   graphics_fill_circle(ctx,minute_hand, 17);
+  graphics_context_set_fill_color(ctx , GColorFromHEX(pers.moonColor) );
   graphics_fill_circle(ctx,minute_hand, 15);
+#elif PBL_SDK_2  
+   graphics_context_set_fill_color(ctx, GColorWhite);
+   graphics_fill_circle(ctx,minute_hand, 17);
+  graphics_context_set_fill_color(ctx ,GColorBlack );
+  graphics_fill_circle(ctx,minute_hand, 15);
+#endif
+
   time_t temp = time(NULL); 
   struct tm *tick_time = localtime(&temp);
   static char s_buffer[8];
+  
+   if (pers.moonFontInvert){
+     graphics_context_set_text_color(ctx,GColorBlack);   
+  }else{
+     graphics_context_set_text_color(ctx,GColorWhite);   
+  }
+  
   strftime(s_buffer, sizeof(s_buffer), "%M" , tick_time);
   GRect sgr =  GRect(minute_hand.x-7, minute_hand.y-12,15,15);
   graphics_draw_text(ctx, 
@@ -69,11 +83,17 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_fill_circle(ctx,second_hand, 3);
 
+  if (pers.earthFontInvert){
+     graphics_context_set_text_color(ctx,GColorBlack);   
+  }else{
+     graphics_context_set_text_color(ctx,GColorWhite);   
+  }
+    
   strftime(s_buffer, sizeof(s_buffer), "%H" , tick_time);
   GRect sgr2 = GRect(center.x - 30, PBL_IF_ROUND_ELSE(60, 54), 60, 60);
   graphics_draw_text(ctx, 
                      s_buffer,  
-                     fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT), 
+                     fonts_get_system_font(pers.earthFontBold ? FONT_KEY_BITHAM_42_BOLD :FONT_KEY_BITHAM_42_LIGHT), 
                      sgr2,
                      GTextOverflowModeWordWrap,
                     GTextAlignmentCenter,
@@ -248,13 +268,24 @@ static void init(){
   
   if ( persist_exists(PERS_VERSION) == false ){
     //no data stored so fallback to coded defaults
-    persist_write_int(PERS_VERSION,2); //we are version 2
+    persist_write_int(PERS_VERSION,3); //we are version 2
     persist_write_bool(PERS_DATE,true);
     persist_write_bool(PERS_BT_VIB,true);
+    persist_write_int(PERS_BACK_COLOR,0);
+    persist_write_int(PERS_EARTH_COLOR,0);
+    persist_write_int(PERS_MOON_COLOR,0);
+    persist_write_bool(PERS_EARTH_FONT_BOLD,false);
+    persist_write_bool(PERS_EARTH_FONT_INVERT,false);
+    persist_write_bool(PERS_MOON_FONT_INVERT,false);
     
-    pers.date   = persist_read_bool(PERS_DATE);   
-    pers.bt_vib = persist_read_bool(PERS_BT_VIB); 
-    
+    pers.date       = persist_read_bool(PERS_DATE);   
+    pers.bt_vib     = persist_read_bool(PERS_BT_VIB); 
+    pers.earthColor = persist_read_int(PERS_EARTH_COLOR);
+    pers.backColor  = persist_read_int(PERS_BACK_COLOR);
+    pers.moonColor  = persist_read_int(PERS_MOON_COLOR);
+    pers.earthFontBold = persist_read_bool(PERS_EARTH_FONT_BOLD);
+    pers.earthFontInvert = persist_read_bool(PERS_EARTH_FONT_INVERT);
+    pers.moonFontInvert = persist_read_bool(PERS_MOON_FONT_INVERT);
   }
   else{
    // data exists 
@@ -262,13 +293,38 @@ static void init(){
    if (persist_read_int(PERS_VERSION)==1){
      pers.date = persist_read_bool(PERS_DATE);
      persist_write_bool(PERS_BT_VIB,false);    //false is default
-     pers.bt_vib = persist_read_bool(PERS_BT_VIB);  
-     persist_write_int(PERS_VERSION,2);
+     pers.bt_vib = persist_read_bool(PERS_BT_VIB); 
+      persist_write_int(PERS_BACK_COLOR,0);
+      persist_write_int(PERS_EARTH_COLOR,0);
+      persist_write_int(PERS_MOON_COLOR,0);
+      persist_write_bool(PERS_EARTH_FONT_BOLD,false);
+      persist_write_bool(PERS_EARTH_FONT_INVERT,false);
+      persist_write_bool(PERS_MOON_FONT_INVERT,false);
+      persist_write_int(PERS_VERSION,3);
    }
    if (persist_read_int(PERS_VERSION)==2){
      pers.date = persist_read_bool(PERS_DATE);
      pers.bt_vib = persist_read_bool(PERS_BT_VIB);  
-   }   
+     persist_write_int(PERS_BACK_COLOR,0);
+      persist_write_int(PERS_EARTH_COLOR,0);
+      persist_write_int(PERS_MOON_COLOR,0);
+      persist_write_bool(PERS_EARTH_FONT_BOLD,false);
+      persist_write_bool(PERS_EARTH_FONT_INVERT,false);
+      persist_write_bool(PERS_MOON_FONT_INVERT,false);
+      persist_write_int(PERS_VERSION,3);
+   }  
+   if (persist_read_int(PERS_VERSION)==3){
+      pers.date       = persist_read_bool(PERS_DATE);   
+      pers.bt_vib     = persist_read_bool(PERS_BT_VIB); 
+      pers.earthColor = persist_read_int(PERS_EARTH_COLOR);
+      pers.backColor  = persist_read_int(PERS_BACK_COLOR);
+      pers.moonColor  = persist_read_int(PERS_MOON_COLOR);
+      pers.earthFontBold = persist_read_bool(PERS_EARTH_FONT_BOLD);
+      pers.earthFontInvert = persist_read_bool(PERS_EARTH_FONT_INVERT);
+      pers.moonFontInvert = persist_read_bool(PERS_MOON_FONT_INVERT);
+    
+   } 
+    
    else{
      //wrong version
      ;
