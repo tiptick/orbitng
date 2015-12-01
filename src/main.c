@@ -92,8 +92,8 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
      graphics_context_set_text_color(ctx,GColorWhite);   
   }
     
-  strftime(s_buffer, sizeof(s_buffer), "%H" , tick_time);
-  GRect sgr2 = GRect(center.x - 30, PBL_IF_ROUND_ELSE(60, 54), 60, 60);
+  strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ? "%H" : "%I" , tick_time);
+  GRect sgr2 = GRect(0,bounds.size.h/2-30,bounds.size.w, bounds.size.h/2);
   graphics_draw_text(ctx, 
                      s_buffer,  
                      fonts_get_system_font(pers.earthFontBold ? FONT_KEY_BITHAM_42_BOLD :FONT_KEY_BITHAM_42_LIGHT), 
