@@ -6,14 +6,18 @@
         "PERS_EARTH_COLOR": 5,
         "PERS_EARTH_FONT_BOLD": 7,
         "PERS_EARTH_FONT_INVERT": 8,
+        "PERS_EARTH_ORBIT_INVERT": 10,
         "PERS_MOON_COLOR": 6,
         "PERS_MOON_FONT_INVERT": 9,
+        "PERS_MOON_ORBIT_INVERT": 11,
         "PERS_VERSION": 1
     },
     "capabilities": [
-        "configurable"
+        "configurable",
+        "health"
     ],
     "companyName": "JB Apps",
+    "enableMultiJS": false,
     "longName": "Orbit NextGen",
     "projectType": "native",
     "resources": {
@@ -22,7 +26,7 @@
                 "file": "images/OrbitNG_28.png",
                 "menuIcon": true,
                 "name": "ORBITNG_28",
-                "type": "png"
+                "type": "bitmap"
             }
         ]
     },
@@ -34,7 +38,7 @@
         "chalk"
     ],
     "uuid": "0f5d23f0-e044-41b7-a975-ece6acbcf990",
-    "versionLabel": "1.01",
+    "versionLabel": "1.02",
     "watchapp": {
         "watchface": true
     }

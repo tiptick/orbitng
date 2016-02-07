@@ -83,5 +83,28 @@ void inbox_received_handler(DictionaryIterator *iter, void *context) {
     pers.moonFontInvert = false;
    //APP_LOG(APP_LOG_LEVEL_ERROR, "Could not parse config form phone: moon_COLOR");
   }
+  Tuple *morb = dict_find(iter, PERS_MOON_ORBIT_INVERT);
+    if (morb && morb->value->int32 > 0){
+      persist_write_bool(PERS_MOON_ORBIT_INVERT,true);
+      pers.moonOrbitInvert = true;
+   }
+   else{
+      persist_write_bool(PERS_MOON_ORBIT_INVERT,false);
+      pers.moonOrbitInvert = false;
+     //APP_LOG(APP_LOG_LEVEL_ERROR, "Could not parse config form phone");
+   }
+   Tuple *eorb = dict_find(iter, PERS_EARTH_ORBIT_INVERT);
+    if (eorb && eorb->value->int32 > 0){
+      persist_write_bool(PERS_EARTH_ORBIT_INVERT,true);
+      pers.earthOrbitInvert = true;
+   }
+   else{
+      persist_write_bool(PERS_EARTH_ORBIT_INVERT,false);
+      pers.earthOrbitInvert = false;
+     //APP_LOG(APP_LOG_LEVEL_ERROR, "Could not parse config form phone");
+   }
+  
+  
+  
 }
 

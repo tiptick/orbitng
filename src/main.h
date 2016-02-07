@@ -9,6 +9,8 @@
 #define PERS_EARTH_FONT_BOLD 7
 #define PERS_EARTH_FONT_INVERT 8
 #define PERS_MOON_FONT_INVERT 9
+#define PERS_EARTH_ORBIT_INVERT 10
+#define PERS_MOON_ORBIT_INVERT 11
 
 typedef struct {
   int hours;
@@ -25,7 +27,18 @@ typedef struct{
   bool earthFontBold;
   bool earthFontInvert;
   bool moonFontInvert;
+  bool earthOrbitInvert;
+  bool moonOrbitInvert;
   
 } Pers;
 
 Pers pers;
+
+typedef struct{
+  bool healthon;
+  int goal;
+  int steps;
+  
+} health_struct;
+
+health_struct health;

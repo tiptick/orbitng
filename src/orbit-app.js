@@ -3,7 +3,7 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
-  var url = 'https://cdn.rawgit.com/tiptick/slate-config-example/1.0/config/index.html';
+  var url = 'https://cdn.rawgit.com/tiptick/slate-config-example/1.02/config/index.html';
   console.log('Showing configuration page: ' + url);
 
   Pebble.openURL(url);
@@ -50,8 +50,12 @@ if (configData['earthFontInvert'] === true){
 if (configData['moonFontInvert'] === true){
   dict['PERS_MOON_FONT_INVERT'] = configData['moonFontInvert'];
 } 
-    
-  
+if (configData['moonOrbitInvert'] === true){
+  dict['PERS_MOON_ORBIT_INVERT'] = configData['moonOrbitInvert'];
+}     
+if (configData['earthOrbitInvert'] === true){
+  dict['PERS_EARTH_ORBIT_INVERT'] = configData['earthOrbitInvert'];
+}     
 
   
   

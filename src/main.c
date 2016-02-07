@@ -2,6 +2,7 @@
 #include "main.h"
 
 #include <configdialog.h>
+#include <health.h>
 
 static Layer *s_canvas_layer;
 static int s_radius = 52;
@@ -18,7 +19,11 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(this_layer);
   GPoint center = GPoint(bounds.size.w / 2, (bounds.size.h / 2));
 #ifdef PBL_SDK_2
-  graphics_context_set_fill_color(ctx, GColorBlack);
+  if (pers.backColor>10){
+   graphics_context_set_fill_color(ctx, GColorWhite);
+  }else{
+    graphics_context_set_fill_color(ctx, GColorBlack);
+  }
 #elif PBL_SDK_3
   graphics_context_set_fill_color(ctx, GColorFromHEX(pers.backColor));
 #endif
@@ -26,20 +31,32 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 
   graphics_context_set_fill_color(ctx, GColorBlack);
 #ifdef PBL_SDK_3
-  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, pers.earthOrbitInvert ? GColorBlack : GColorWhite);
   graphics_context_set_stroke_width(ctx, 2);
   graphics_context_set_fill_color(ctx,GColorFromHEX(pers.earthColor));
   graphics_draw_circle(ctx, center, s_radius);
   graphics_fill_circle(ctx, center, s_radius-1);
 
 #elif PBL_SDK_2
-  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_color(ctx, pers.earthOrbitInvert ? GColorBlack : GColorWhite);
 //graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_draw_circle(ctx, center, s_radius);
  // graphics_context_set_fill_color(ctx, GColorBlack);
  // graphics_draw_circle(ctx, center, s_radius-2);
 #endif
  
+  #if defined(PBL_HEALTH)
+   GPoint health_hand = (GPoint) {
+    .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * health.steps / health.goal ) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.x,
+    .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * health.steps / health.goal) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.y,
+  };
+   graphics_context_set_fill_color(ctx, GColorBlack);
+   graphics_fill_circle(ctx,health_hand, 4);
+  
+  
+  
+  #endif
+  
   //float minute_angle = TRIG_MAX_ANGLE * s_last_time.minutes / 60;
   GPoint minute_hand = (GPoint) {
     .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * s_last_time.minutes / 60) * (int32_t)(s_radius - HAND_MARGIN) / TRIG_MAX_RATIO) + center.x,
@@ -47,14 +64,19 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
   };
  //graphics_draw_line(ctx, center, minute_hand);
 #ifdef PBL_SDK_3
-  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_fill_color(ctx, pers.moonOrbitInvert ? GColorBlack : GColorWhite);
    graphics_fill_circle(ctx,minute_hand, 17);
   graphics_context_set_fill_color(ctx , GColorFromHEX(pers.moonColor) );
   graphics_fill_circle(ctx,minute_hand, 15);
 #elif PBL_SDK_2  
-   graphics_context_set_fill_color(ctx, GColorWhite);
+   graphics_context_set_fill_color(ctx, pers.moonOrbitInvert ? GColorBlack : GColorWhite);
    graphics_fill_circle(ctx,minute_hand, 17);
-  graphics_context_set_fill_color(ctx ,GColorBlack );
+   if (pers.moonColor>10){
+   graphics_context_set_fill_color(ctx, GColorWhite);
+  }else{
+    graphics_context_set_fill_color(ctx, GColorBlack);
+  }
+  
   graphics_fill_circle(ctx,minute_hand, 15);
 #endif
 
@@ -83,7 +105,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
     .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * s_last_time.second / 60) * (int32_t)(17) / TRIG_MAX_RATIO) + minute_hand.x,
     .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * s_last_time.second / 60) * (int32_t)(17) / TRIG_MAX_RATIO) + minute_hand.y,
   };
-  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_fill_color(ctx, pers.moonOrbitInvert ? GColorBlack : GColorWhite);
   graphics_fill_circle(ctx,second_hand, 3);
 
   if (pers.earthFontInvert){
@@ -280,6 +302,8 @@ static void init(){
     persist_write_bool(PERS_EARTH_FONT_BOLD,false);
     persist_write_bool(PERS_EARTH_FONT_INVERT,false);
     persist_write_bool(PERS_MOON_FONT_INVERT,false);
+    persist_write_bool(PERS_EARTH_ORBIT_INVERT,false);
+    persist_write_bool(PERS_MOON_ORBIT_INVERT,false);
     
     pers.date       = persist_read_bool(PERS_DATE);   
     pers.bt_vib     = persist_read_bool(PERS_BT_VIB); 
@@ -289,6 +313,9 @@ static void init(){
     pers.earthFontBold = persist_read_bool(PERS_EARTH_FONT_BOLD);
     pers.earthFontInvert = persist_read_bool(PERS_EARTH_FONT_INVERT);
     pers.moonFontInvert = persist_read_bool(PERS_MOON_FONT_INVERT);
+    pers.moonOrbitInvert = persist_read_bool(PERS_MOON_ORBIT_INVERT);
+    pers.earthOrbitInvert = persist_read_bool(PERS_EARTH_ORBIT_INVERT);
+    
   }
   else{
    // data exists 
@@ -325,7 +352,8 @@ static void init(){
       pers.earthFontBold = persist_read_bool(PERS_EARTH_FONT_BOLD);
       pers.earthFontInvert = persist_read_bool(PERS_EARTH_FONT_INVERT);
       pers.moonFontInvert = persist_read_bool(PERS_MOON_FONT_INVERT);
-    
+      pers.moonOrbitInvert = persist_read_bool(PERS_MOON_ORBIT_INVERT);
+      pers.earthOrbitInvert = persist_read_bool(PERS_EARTH_ORBIT_INVERT);
    } 
     
    else{
@@ -335,7 +363,14 @@ static void init(){
     
   }  
   
-  
+#if defined(PBL_HEALTH)
+  // Attempt to subscribe 
+if(!health_service_events_subscribe(health_handler, NULL)) {
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Health not available!");
+}
+#else
+APP_LOG(APP_LOG_LEVEL_ERROR, "Health not available!");
+#endif
   
 }
 
@@ -343,10 +378,13 @@ static void deinit(){
     // Destroy Window
   window_destroy(s_main_window);
 }
-
-
+  
+  
+  
 int main(){
+ health.goal = 5000;
   init();
+  
   app_event_loop();
   deinit(); 
   return 0;
